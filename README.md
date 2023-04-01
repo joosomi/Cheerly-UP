@@ -1,4 +1,9 @@
-# Cheerly-UP
+# 취얼업(Cheerly-UP)?
+> 개발자 취업준비생들을 위한 자기계발 커뮤니티 (취업 준비 & 건강한 루틴 만들기) <br>
+http://52.79.93.121:3000/ <br>
+아이디: root <br>
+비밀번호: root123!
+
 
 <p align="center">
   <br>
@@ -6,40 +11,123 @@
   <br>
 </p>
 
-## 프로젝트 소개
+------
+
+## 1. 제작 기간 & 참여 인원
+- 2023.02.11~2023.02.25 (2주)
+- 개발 인원: 프론트엔드 2명, 백엔드 2명 - 총 4명의 팀 프로젝트
+- 맡은 역할: 백엔드 개발
+
+<br>
+
+## 2. 사용 기술
+#### `Back-end`
+  - TypeScript
+  - NestJS
+  - TypeORM
+  - Socket.io
+  - JWT
+#### `Front-end`
+  - ReactJS
+#### `Database`
+  - MySQL
+#### `DevOps`
+  - AWS EC2
+  - Docker
+<br>
+
+## 3. ERD 설계
+<img src='https://ifh.cc/g/kh9V5w.png' border='0'>
+
+
+## 4. 핵심 기능
+이 서비스의 핵심 기능은 크게 5가지로, 투두리스트 · 게시판 · 채팅 · 크롤링 · 도서 검색 기능입니다. 
+<br>
+
+<details>
+<summary><b>핵심 기능 간단 설명</b></summary>
+<div markdown="1">
+
+### 4.1. 투두리스트(study, life)
+1. 투두리스트를 이용하여 그날의 공부나 생활 습관을 기록 가능. <br>
+   DB에는 투두리스트의 내용과 성공 유무, 날짜, 유저 정보를 저장
+2. 투두리스트의 성공 기록들은 따로 나의 기록 보기 페이지를 통해 확인 가능(done값이 1인 값만 보여주게 설정)
+
+### 4.2. 게시판
+1. 로그인하지 않은 사용자는 게시글을 읽을 수만 있음
+2. 로그인한 사용자는 게시글 및 댓글 작성 가능, 본인이 작성한 글만 수정과 삭제가 가능 <br>
+본인이 쓴 글이나 댓글이 아닌데 수정과 삭제를 하려는 경우 알람창이 뜨도록 설정<br>
+게시판과 댓글들은 모두 db에 저장 - 해당 게시글 번호에 맞는 게시글 데이터와, 그 아이디에 맞는 댓글을 불러옴.
+3. 사용자의 프로필 사진이 옆에 뜨도록 설정
+
+### 4.3. 채팅
+1. 사용자는 본인이  방을 만들 수 있음 - 이는 DB에 저장<br>
+2. 웹소켓을 활용하여 전체 채팅이 가능
+
+### 4.4. 인프런 스터디 모집글 크롤링
+1. puppeteer를 이용하여 인프런 스터디 모집글 최신순으로 40개 크롤링 - 느낌표 버튼을 누르면 해당 url로 이동 <br>
+2. 글의 제목, 모집중/모집완료, 링크 주소를 크롤링
+
+### 4.5. 도서 검색 (마음의 양식)
+1. 카카오 검색 API를 활용하여 도서를 검색하면 도서 이미지가 뜸
+2. 이미지를 클릭하면 해당 도서 관련 검색 정보 확인 가능
+
+### 4.6 기타
+1. **로그인/회원가입**
+  : 아이디, 닉네임 중복확인 <br>
+>bcrypt로 암호화하여 비밀번호를 저장<br>
+ 카카오톡 소셜 로그인 기능<br>
+ - 로그인에 성공할 경우, jwt 토큰을 생성하고 유저의 정보를 세션에 저장<br>
+ - 카카오 로그인의 경우 쿠키에 값을 저장<br>
+ - 토큰의 유효성 검사는 리덕스로 관리<br>
+ - 로그아웃할 경우, 쿠키에 저장된 카카오 토큰 값을 지우고, 다른 세션 값들도 삭제<br>
+ - Redux-persist를 통해 새로고침해도 로그인 유지<br> 
+2. **navbar**
+: jwt토큰과 카카오 토큰의 값이 유효하다면 권한이 필요한 (게시판, 공부, 라이프, 채팅) 페이지에 접근 가능<br>
+>하지만 토큰이 유효하지 않다면 로그인 페이지로 이동<br>
+
+
+</div>
+</details>
+<br> 
+
+
+## 5. 개발한 부분
+- ERD 설계 
+- `NestJS` + `TypeORM` 을 통해 `RESTful API`구현
+    - `axios` 활용한 데이터 통신 구현
+        - 게시판, 댓글 기능 API 구현
+        - Todo-list 기능 API 구현
+        - 사용자  관련 API 구현
+    
+- **프로필 이미지 `multer`를 이용한 업로드 기능 구현**
+    - 서버의 upload 폴더에 사용자의 이미지가 업로드 되도록 경로 설정
+    - default값을 db에 기본 프로필 이미지의 파일이름으로 설정
+    - 파일명 중복 방지를 위해 원래 파일 이름 앞에 `Date.now()`를 추가하여 변환
+    
+- **`puppeteer`를 활용하여 외부 사이트 데이터 크롤링 기능 구현**
+    - 크롬 브라우저를 백그라운드에서 띄우고, 인프런 웹 페이지에 접속하여 필요한 정보 수집
+
+- **`AWS EC2` 와 `Docker` 를 활용하여 프로젝트 배포**
+    - `Dockerfile`에 Node.js 16 버전 및 Chromium 브라우저를 설치하고, Puppeteer 라이브러리와 필요한 라이브러리들을 추가로 설치하여 배포
+
+<br>
+
+## 트러블 슈팅 및 개선사항
+- Docker를 활용한 배포
+    - puppeteer 프로그램을 도커를 사용해서 배포할 때 처음에 크롤링 기능이 작동하지 않는 문제가 발생했었습니다. 이후 도커파일에 chromium에 필요한 패키지들과 필요한 라이브러리를 설치해주어야 한다는 것을 알게 되었고 이를 통해 문제를 해결하였습니다.
+        
+        > 관련 링크)
+        > [[Docker] docker로 puppeteer 크롤링 프로젝트 배포시 오류 해결하기](https://velog.io/@jsomedev/docker로-puppeteer-크롤링-프로젝트-배포시-오류-해결하기)
+        > 
+    - AWS 프리 티어를 이용하여 여러개의 프로젝트를 현재 배포를 하고 있어서 메모리 부족 문제가 발생했습니다. 이를 해결하기 위해 swap 메모리를 활용하여 RAM 크기의 한계를 최대한 해결하고자 하였습니다.
+    
+- 크롤링 시간이 오래 걸리는 문제
+    - 크롤링 시간이 약 10초 이상 걸려 걸려 사용자 서비스에 악영향을 미치는 문제가 발생하였습니다. 현재는 순차적으로 크롤링 작업을 진행하고 있기 때문에, 크롤링 작업을 `Promise.all()` 을 사용하는 방식으로 병렬로 처리해 이를 해결할 수 있는 방향이 있다는 것을 알게 되었고, 추후 개선해야 하는 사항입니다.
+
+-    **[기타 트러블 슈팅 및 자세히 기록한 회고록](https://velog.io/@jsomedev/새싹-발표를-끝마치고-쓰는-2차-팀프로젝트-회고록)**
 
 <p align="justify">
-개발자 취준생들을 위한 커뮤니티 (취업 준비 & 건강한 루틴 만들기)
-</p>
-
-<p align="center">
-GIF Images
-</p>
-
-<br>
-
-## 기술 스택
-
-| Backend |
-| :--------: |
-|<img src="https://img.shields.io/badge/NestJS-red?style=for-the-badge&logo=NestJS&logoColor=white"/> <img src="https://img.shields.io/badge/Typescript-3178C6?style=for-the-badge&logo=Typescript&logoColor=white"/>  <img src="https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens" alt="JWT">  <img src="https://img.shields.io/badge/passport-black?style=for-the-badge&logo=passport" alt="Passport"> <img src="https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101" alt="Socket.io"> <img src="https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL"> <img src="https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="AWS">|
-
-<br>
-
-## 구현 기능
-
-### 기능 1
-
-### 기능 2
-
-### 기능 3
-
-### 기능 4
-
-<br>
-
-## 배운 점 & 아쉬운 점
-
-<p align="justify">
 
 </p>
+
